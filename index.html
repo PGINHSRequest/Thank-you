@@ -2,68 +2,79 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Request Submitted</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <title>Student Document Request</title>
+  <script src="https://cdn.emailjs.com/sdk/3.2/email.min.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    .card {
-      background: #ffffff;
-      padding: 40px;
-      max-width: 420px;
-      width: 90%;
-      text-align: center;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-
-    h1 {
-      color: #28a745;
-      margin-bottom: 10px;
-    }
-
-    p {
-      color: #555;
-      line-height: 1.6;
-    }
-
-    a {
-      display: inline-block;
-      margin-top: 25px;
-      padding: 12px 24px;
-      background: #007bff;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-    }
-
-    a:hover {
-      background: #0056b3;
-    }
+    body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 20px; }
+    h2 { text-align: center; }
+    form { max-width: 500px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 5px; }
+    form input, form button { width: 100%; padding: 10px; margin: 10px 0; }
+    table { width: 100%; max-width: 800px; margin: 20px auto; border-collapse: collapse; background: #fff; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    th { background-color: #007bff; color: white; }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <h1>Thank You!</h1>
-    <p>Your document request has been successfully submitted.</p>
-    <p>Please keep checking the status of your request.</p>
+<h2>Student Document Request</h2>
 
-    <!-- CHANGE THIS LINK TO YOUR STATUS REPO URL -->
-    <a href="https://https://pginhsrequest.github.io/status/">
-      Check Request Status
-    </a>
-  </div>
+<form id="requestForm">
+  <input type="text" name="name" placeholder="Student Name" required>
+  <input type="email" name="email" placeholder="Student Email" required>
+  <input type="text" name="document" placeholder="Document Requested" required>
+  <button type="submit">Submit Request</button>
+</form>
+
+<table id="requestTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Document</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Requests will appear here -->
+  </tbody>
+</table>
+
+<script>
+  // Initialize EmailJS
+  (function(){
+    emailjs.init("YOUR_USER_ID"); // Replace with your EmailJS user ID
+  })();
+
+  const form = document.getElementById("requestForm");
+  const tbody = document.getElementById("requestTable").querySelector("tbody");
+
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+
+    const name = this.name.value;
+    const email = this.email.value;
+    const documentName = this.document.value;
+
+    // Send email via EmailJS
+    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+      student_name: name,
+      student_email: email,
+      document_name: documentName
+    })
+    .then(function(response) {
+      alert("Request submitted and email sent!");
+    }, function(error) {
+      alert("Failed to send email: " + JSON.stringify(error));
+    });
+
+    // Add request to table
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${name}</td><td>${email}</td><td>${documentName}</td>`;
+    tbody.appendChild(tr);
+
+    // Reset form
+    this.reset();
+  });
+</script>
 
 </body>
 </html>
